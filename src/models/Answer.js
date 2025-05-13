@@ -5,8 +5,9 @@ const answerSchema = new mongoose.Schema({
   question_id: { type: Number, required: true },
   content: { type: String, required: true },
   emotion_type: { type: String },
-  is_public: { type: Boolean, default: false },
+  is_public: { type: Boolean, default: true },
   created_at: { type: Date, default: Date.now },
 })
 
 module.exports = mongoose.model('Answer', answerSchema)
+

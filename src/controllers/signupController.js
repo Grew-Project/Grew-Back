@@ -1,5 +1,6 @@
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
+const Tree = require('../models/Tree')
 
 exports.signup = async (req, res) => {
   const { user_id, password, nickname } = req.body
@@ -28,7 +29,15 @@ exports.signup = async (req, res) => {
       nickname,
     })
 
+    const newTree = new Tree({
+      user_id,
+      tree_name: `행복나무`,
+      tree_type: '사과나무',
+      answer_count: 0,
+    })
+
     await newUser.save()
+    await newTree.save()
 
     res.status(201).json({ message: '회원가입 성공' })
   } catch (error) {
