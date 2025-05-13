@@ -13,6 +13,7 @@ const leafCountRoutes = require('./main/leafCount')
 const treeNameRoutes = require('./main/treeName')
 const treeNameUpdateRoutes = require('./main/treeNameUpdate')
 const leafContentRoutes = require('./main/leafContent')
+const answerOrNotRoutes = require('./main/answerOrNot')
 
 router.use('/tree-info', treeInfoRoutes)
 router.use('/answer-count', answerCountRoutes)
@@ -21,5 +22,6 @@ router.use('/leaf-count', leafCountRoutes)
 router.use('/tree-name', treeNameRoutes)
 router.use('/tree-name-update', treeNameUpdateRoutes)
 router.use('/leaf-content', leafContentRoutes)
+router.use('/answer-or-not', answerOrNotRoutes)
 
 module.exports = router

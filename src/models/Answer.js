@@ -1,12 +1,13 @@
 const mongoose = require('mongoose')
 
 const answerSchema = new mongoose.Schema({
-  nickname: String,
-  question_id: Number,
-  content: String,
-  emotion_type: String,
+  nickname: { type: String, required: true },
+  question_id: { type: Number, required: true },
+  content: { type: String, required: true },
+  emotion_type: { type: String },
+  is_public: { type: Boolean, default: true },
   created_at: { type: Date, default: Date.now },
 })
 
-const Answer = mongoose.model('Answer', answerSchema)
-module.exports = Answer
+module.exports = mongoose.model('Answer', answerSchema)
+
