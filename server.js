@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const connectDB = require('./src/config/db');
 const bodyParser = require('body-parser');
@@ -7,7 +6,6 @@ require('dotenv').config();
 
 const app = express();
 
-// 서버 연결
 connectDB();
 
 // 미들웨어 설정
