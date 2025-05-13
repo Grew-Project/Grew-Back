@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
     const tree = await Tree.findOne({ user_id })
 
     if (!tree) {
-      return res.status(404).json({ error: '성장중인 나무를 찾을 수 없습니다.' })
+      return res.status(404).json({ error: '유저가 존재하지 않습니다.' })
     }
 
     let tree_status
