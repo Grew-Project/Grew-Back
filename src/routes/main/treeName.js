@@ -18,8 +18,9 @@ router.get('/', async (req, res) => {
     if (!tree) {
       return res.status(404).json({ error: '유저가 존재하지 않습니다.' })
     }
-
-    res.json({ answer_count: tree.answer_count })
+    res.json({
+      tree_name: tree.tree_name,
+    })
   } catch (err) {
     console.error(err)
     res.status(500).json({ error: '서버 오류' })
