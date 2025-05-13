@@ -10,7 +10,7 @@ const treeNameRoutes = require('./main/treeName')
 const treeNameUpdateRoutes = require('./main/treeNameUpdate')
 const leafContentRoutes = require('./main/leafContent')
 const answerOrNotRoutes = require('./main/answerOrNot')
-const questionSearchRoutes = require('./main/questionSearch')
+const questionSearchRoutes = require('./today/questionSearch')
 
 router.use('/tree-info', treeInfoRoutes)
 router.use('/answer-count', answerCountRoutes)
