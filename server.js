@@ -1,21 +1,23 @@
-const express = require('express');
-const connectDB = require('./src/config/db');
-const bodyParser = require('body-parser');
-const authRoutes = require('./src/routes/signup');
-require('dotenv').config();
+const express = require('express')
+const connectDB = require('./src/config/db')
+const bodyParser = require('body-parser')
+const authRoutes = require('./src/routes/signup')
+const loginRoutes = require('./src/routes/login')
+require('dotenv').config()
 
-const app = express();
+const app = express()
 
-connectDB();
+connectDB()
 
 // 미들웨어 설정
-app.use(bodyParser.json());
+app.use(bodyParser.json())
 
 // 라우터 설정
-app.use('/api/auth', authRoutes);
+app.use('/api/auth', authRoutes)
+app.use('/api/auth', loginRoutes)
 
 // 서버 시작
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3000
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+  console.log(`Server is running on port ${port}`)
+})
