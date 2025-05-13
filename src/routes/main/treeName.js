@@ -1,5 +1,5 @@
 const express = require('express')
-const User = require('../../models/User.js')
+const Tree = require('../../models/Tree.js')
 
 const router = express.Router()
 
@@ -13,13 +13,14 @@ router.get('/', async (req, res) => {
 
     console.log('요청된 user_id:', user_id)
 
-    const user = await User.findOne({ user_id })
+    const tree = await Tree.findOne({ user_id })
 
-    if (!user) {
+    if (!tree) {
       return res.status(404).json({ error: '유저가 존재하지 않습니다.' })
     }
-
-    res.json({ flower_count: user.flower_count })
+    res.json({
+      tree_name: tree.tree_name,
+    })
   } catch (err) {
     console.error(err)
     res.status(500).json({ error: '서버 오류' })

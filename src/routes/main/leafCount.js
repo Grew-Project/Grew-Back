@@ -16,7 +16,7 @@ router.get('/', async (req, res) => {
     const user = await User.findOne({ user_id })
 
     if (!user) {
-      return res.status(404).json({ error: '유저를 찾을 수 없습니다.' })
+      return res.status(404).json({ error: '유저가 존재하지 않습니다.' })
     }
 
     res.json({ leaf_count: user.leaf_count })
