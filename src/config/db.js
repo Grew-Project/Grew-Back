@@ -1,4 +1,3 @@
-// config/db.js
 const mongoose = require('mongoose');
 require('dotenv').config();
 
@@ -8,7 +7,7 @@ const connectDB = async () => {
     console.log('MongoDB connected');
   } catch (error) {
     console.error('MongoDB connection error:', error.message);
-    process.exit(1); // 프로그램 종료
+    process.exit(1);
   }
 };
 
