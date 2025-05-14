@@ -1,24 +1,48 @@
 const express = require('express')
 const router = express.Router()
 const User = require('../../models/User.js')
+const FlowerSendLog = require('../../models/Flower.js')
 
 router.post('/', async (req, res) => {
   try {
-    const { nickname } = req.body
+    const { receiver_nickname, sender_nickname } = req.body
 
-    if (!nickname) {
-      return res.status(400).json({ message: 'nickname이 필요합니다.' })
+    if (!receiver_nickname || !sender_nickname) {
+      return res
+        .status(400)
+        .json({ message: 'receiver_nickname과 sender_nickname 모두 필요합니다.' })
     }
-    
+
+    // 오늘 자정 00:00:00
+    const todayMidnight = new Date()
+    todayMidnight.setHours(0, 0, 0, 0) // 오늘 자정으로 설정
+
+    // 내일 자정 00:00:00
+    const tomorrowMidnight = new Date(todayMidnight)
+    tomorrowMidnight.setDate(todayMidnight.getDate() + 1)
+
+    // 오늘 자정부터 내일 자정까지 보낸 기록이 있는지 확인
+    const alreadySent = await FlowerSendLog.findOne({
+      receiver_nickname,
+      sender_nickname,
+      createdAt: { $gte: todayMidnight, $lt: tomorrowMidnight }, // 자정 기준
+    })
+
+    if (alreadySent) {
+      return res.status(429).json({ message: '오늘 이미 응원꽃을 보냈습니다.' })
+    }
+
     const updatedUser = await User.findOneAndUpdate(
-      { nickname },
+      { nickname: receiver_nickname },
       { $inc: { flower_count: 1 } },
       { new: true }
     )
 
     if (!updatedUser) {
-      return res.status(404).json({ message: '해당 닉네임의 유저를 찾을 수 없습니다.' })
+      return res.status(404).json({ message: '받는 유저를 찾을 수 없습니다.' })
     }
+
+    await FlowerSendLog.create({ sender_nickname, receiver_nickname })
 
     res.status(200).json({
       message: '응원꽃이 성공적으로 보내졌습니다.',

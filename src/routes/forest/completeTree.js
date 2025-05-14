@@ -5,6 +5,26 @@ const Tree = require('../../models/Tree.js')
 
 const EMOTIONS = ['Anger', 'Happiness', 'Love', 'Sadness', 'Confusion']
 
+// 감정 우선순위 (높을수록 앞쪽에 배치)
+const EMOTION_PRIORITY = ['Happiness', 'Love', 'Sadness', 'Confusion', 'Anger']
+
+function getEmotionAdjective(emotion) {
+  switch (emotion) {
+    case 'Happiness':
+      return '행복한'
+    case 'Sadness':
+      return '슬픈'
+    case 'Love':
+      return '사랑스러운'
+    case 'Anger':
+      return '화난'
+    case 'Confusion':
+      return '혼란스러운'
+    default:
+      return '행복한'
+  }
+}
+
 router.get('/', async (req, res) => {
   try {
     const { nickname } = req.query
@@ -35,18 +55,24 @@ router.get('/', async (req, res) => {
 
       const emotionCounts = {}
       EMOTIONS.forEach(emotion => (emotionCounts[emotion] = 0))
+
       group.forEach(answer => {
         if (EMOTIONS.includes(answer.emotion_type)) {
           emotionCounts[answer.emotion_type]++
         }
       })
 
-      const dominantEmotion = Object.entries(emotionCounts).reduce((max, current) =>
-        current[1] > max[1] ? current : max
-      )[0]
+      const dominantEmotion = EMOTION_PRIORITY.reduce((selected, emotion) => {
+        if (
+          emotionCounts[emotion] > (emotionCounts[selected] || 0) ||
+          (emotionCounts[emotion] === emotionCounts[selected] && !selected)
+        ) {
+          return emotion
+        }
+        return selected
+      }, null)
 
       const emotionAdjective = getEmotionAdjective(dominantEmotion)
-
       const resultTreeName = `${emotionAdjective} ${tree.tree_name}`
 
       groups.push({
@@ -63,22 +89,5 @@ router.get('/', async (req, res) => {
     res.status(500).json({ message: '서버 오류가 발생했습니다.', error: error.message })
   }
 })
-
-function getEmotionAdjective(emotion) {
-  switch (emotion) {
-    case 'Happiness':
-      return '행복한'
-    case 'Sadness':
-      return '슬픈'
-    case 'Love':
-      return '사랑스러운'
-    case 'Anger':
-      return '화난'
-    case 'Confusion':
-      return '혼란스러운'
-    default:
-      return '특별한'
-  }
-}
 
 module.exports = router
