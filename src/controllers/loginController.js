@@ -25,6 +25,7 @@ exports.loginUser = async (req, res) => {
     res.status(200).json({
       message: '로그인 성공',
       token,
+      nickname: user.nickname,
     })
   } catch (err) {
     console.error(err)
