@@ -3,10 +3,8 @@ const router = express.Router()
 const Answer = require('../../models/Answer.js')
 const Tree = require('../../models/Tree.js')
 
-const EMOTIONS = ['Anger', 'Happiness', 'Love', 'Sadness', 'Confusion']
-
 // 감정 우선순위 (높을수록 앞쪽에 배치)
-const EMOTION_PRIORITY = ['Happiness', 'Love', 'Sadness', 'Confusion', 'Anger']
+const EMOTION_PRIORITY = ['Love', 'Happiness', 'Confusion', 'Sadness', 'Anger']
 
 function getEmotionAdjective(emotion) {
   switch (emotion) {
@@ -54,10 +52,10 @@ router.get('/', async (req, res) => {
       const group = allAnswers.slice(i, i + groupSize)
 
       const emotionCounts = {}
-      EMOTIONS.forEach(emotion => (emotionCounts[emotion] = 0))
+      EMOTION_PRIORITY.forEach(emotion => (emotionCounts[emotion] = 0))
 
       group.forEach(answer => {
-        if (EMOTIONS.includes(answer.emotion_type)) {
+        if (EMOTION_PRIORITY.includes(answer.emotion_type)) {
           emotionCounts[answer.emotion_type]++
         }
       })
