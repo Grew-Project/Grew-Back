@@ -24,3 +24,7 @@ const port = process.env.PORT || 3000
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`)
 })
+
+app.get('/', (req, res) => {
+  res.send('프로젝트 그루의 백엔드 서버입니다.')
+})
