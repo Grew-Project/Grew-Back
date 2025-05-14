@@ -3,7 +3,6 @@ const router = express.Router()
 
 const treeInfoRoutes = require('./main/treeInfo')
 const answerCountRoutes = require('./main/answerCount')
-const answerSearchRoutes = require('./main/answerSearch')
 const flowerCountRoutes = require('./main/flowerCount')
 const leafCountRoutes = require('./main/leafCount')
 const treeNameRoutes = require('./main/treeName')
@@ -20,7 +19,6 @@ router.use('/tree-name', treeNameRoutes)
 router.use('/tree-name-update', treeNameUpdateRoutes)
 router.use('/leaf-content', leafContentRoutes)
 router.use('/answer-or-not', answerOrNotRoutes)
-router.use('/answer-search', answerSearchRoutes)
 router.use('/question-search', questionSearchRoutes)
 
 module.exports = router
