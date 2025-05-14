@@ -5,12 +5,12 @@ const router = express.Router()
 
 router.post('/', async (req, res) => {
   try {
-    const { nickname, question_id, content, emotion_type, is_public } = req.body
+    const { nickname, question_id, answer_content, emotion_type, is_public } = req.body
 
     const newAnswer = new Answer({
       nickname,
       question_id,
-      content,
+      answer_content,
       emotion_type,
       is_public,
     })
