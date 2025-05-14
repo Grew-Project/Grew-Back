@@ -5,17 +5,17 @@ const User = require('../../models/User')
 
 router.put('/', async (req, res) => {
   try {
-    const { nickname, password } = req.body
+    const { user_id, password } = req.body
 
-    if (!nickname || !password) {
-      return res.status(400).json({ error: 'nickname과 password가 필요합니다.' })
+    if (!user_id || !password) {
+      return res.status(400).json({ error: 'user_id과 password가 필요합니다.' })
     }
 
     const saltRounds = parseInt(process.env.BCRYPT_SALT_ROUNDS || 10)
     const hashedPassword = await bcrypt.hash(password, saltRounds)
 
     const updatedUser = await User.findOneAndUpdate(
-      { nickname },
+      { user_id },
       { password: hashedPassword },
       { new: false }
     )
