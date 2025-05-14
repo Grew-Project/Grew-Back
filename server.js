@@ -1,4 +1,5 @@
 const express = require('express')
+const cors = require('cors')
 const connectDB = require('./src/config/db')
 const bodyParser = require('body-parser')
 const routes = require('./src/routes')
@@ -8,6 +9,13 @@ require('dotenv').config()
 const app = express()
 
 connectDB()
+
+app.use(
+  cors({
+    origin: 'http://localhost:5173',
+    credentials: true,
+  })
+)
 
 app.use(bodyParser.json())
 app.use('/api', routes)
