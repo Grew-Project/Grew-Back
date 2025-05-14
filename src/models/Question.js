@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 
 const questionSchema = new mongoose.Schema({
   question_id: { type: Number, required: true, unique: true },
-  content: { type: String, required: true },
+  question_content: { type: String, required: true },
   emotion_type: { type: String, required: true },
 })
 
