@@ -33,6 +33,7 @@ exports.signup = async (req, res) => {
       user_id,
       tree_name: `행복나무`,
       tree_type: '사과나무',
+      nickname,
       answer_count: 0,
     })
 
