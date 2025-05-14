@@ -6,6 +6,7 @@ const treeSchema = new mongoose.Schema({
   tree_type: String,
   answer_count: { type: Number, default: 0 },
   create_at: { type: Date, default: Date.now },
+  nickname: { type: String, required: true },
 })
 
 const Tree = mongoose.model('Tree', treeSchema)
