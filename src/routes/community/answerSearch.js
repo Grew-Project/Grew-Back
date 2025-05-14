@@ -12,12 +12,18 @@ router.get('/', async (req, res) => {
       return res.status(400).json({ message: '유효하지 않은 감정입니다.' })
     }
 
-    let query = {}
+    let query = { is_public: true }
+
     if (emotion) {
-      query = { emotion_type: emotion }
+      query.emotion_type = emotion
     }
 
-    const answers = await Answer.find(query).sort({ created_at: -1 }).exec()
+    const answers = await Answer.find(query)
+      .select(
+        'nickname question_id question_content answer_content is_public created_at emotion_type'
+      )
+      .sort({ created_at: -1 })
+      .exec()
 
     if (answers.length === 0) {
       return res.status(404).json({ message: '해당 감정의 답변이 없습니다.' })
