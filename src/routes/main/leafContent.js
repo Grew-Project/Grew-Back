@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
     console.log('요청된 receiver_nickname:', receiver_nickname)
 
     const leaves = await Leaf.findOne({ receiver_nickname })
-      .select('-_id sender_nickname receiver_nickname content')
+      .select('-_id sender_nickname receiver_nickname leaf_content')
       .sort({ created_at: -1 }) // 최신순
 
     if (!leaves) {
