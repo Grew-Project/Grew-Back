@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
       return res.status(404).json({ message: '받는 유저를 찾을 수 없습니다.' })
     }
 
-    await Flower.create({
+    const flowerDoc = await Flower.create({
       sender_nickname,
       receiver_nickname,
       flower_ok: true,
@@ -53,6 +53,7 @@ router.post('/', async (req, res) => {
       message: '응원꽃이 성공적으로 보내졌습니다.',
       nickname: updatedUser.nickname,
       flower_count: updatedUser.flower_count,
+      flower_ok: flowerDoc.flower_ok,
     })
   } catch (error) {
     console.error('Error in sendFlower:', error)
