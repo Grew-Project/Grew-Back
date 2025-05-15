@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router()
 const User = require('../../models/User.js')
-const FlowerSendLog = require('../../models/Flower.js')
+const Flower = require('../../models/Flower.js')
 
 router.post('/', async (req, res) => {
   try {
@@ -22,10 +22,11 @@ router.post('/', async (req, res) => {
     tomorrowMidnight.setDate(todayMidnight.getDate() + 1)
 
     // 오늘 자정부터 내일 자정까지 보낸 기록이 있는지 확인
-    const alreadySent = await FlowerSendLog.findOne({
+    const alreadySent = await Flower.findOne({
       receiver_nickname,
       sender_nickname,
       createdAt: { $gte: todayMidnight, $lt: tomorrowMidnight }, // 자정 기준
+      flower_ok: true,
     })
 
     if (alreadySent) {
@@ -42,7 +43,11 @@ router.post('/', async (req, res) => {
       return res.status(404).json({ message: '받는 유저를 찾을 수 없습니다.' })
     }
 
-    await FlowerSendLog.create({ sender_nickname, receiver_nickname })
+    await Flower.create({
+      sender_nickname,
+      receiver_nickname,
+      flower_ok: true,
+    })
 
     res.status(200).json({
       message: '응원꽃이 성공적으로 보내졌습니다.',
