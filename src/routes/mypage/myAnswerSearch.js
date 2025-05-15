@@ -13,22 +13,22 @@ router.get('/', async (req, res) => {
 
     // Answer 컬렉션에서 데이터를 가져옴
     const answers = await Answer.find({ nickname })
-      .select('-_id question_id is_public content created_at') // 필요한 필드만 선택
+      .select('-_id question_id is_public answer_content created_at')
       .sort({ created_at: -1 })
 
     // Question 컬렉션에서 content와 emotion_type을 가져옴
     const results = await Promise.all(
       answers.map(async answer => {
         const question = await Question.findOne({ question_id: answer.question_id }).select(
-          'content emotion_type -_id'
+          'question_content emotion_type -_id'
         )
         return {
           question_id: answer.question_id,
           created_at: answer.created_at,
           is_public: answer.is_public,
-          emotion_type: question ? question.emotion_type : null, // emotion_type 추가
-          question_content: question ? question.content : null, // content 추가
-          answer_content: answer.content,
+          emotion_type: question ? question.emotion_type : null,
+          question_content: question ? question.question_content : null, // content로 접근
+          answer_content: answer.answer_content, // answer_content로 접근
         }
       })
     )
