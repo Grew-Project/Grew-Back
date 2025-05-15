@@ -9,4 +9,4 @@ const FlowerSchema = new mongoose.Schema(
   { timestamps: true }
 )
 
-module.exports = mongoose.model('FlowerSendLog', FlowerSchema)
+module.exports = mongoose.model('Flower', FlowerSchema)
