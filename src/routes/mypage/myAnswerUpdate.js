@@ -4,16 +4,18 @@ const Answer = require('../../models/Answer')
 
 router.put('/', async (req, res) => {
   try {
-    const { nickname, question_id, content, is_public } = req.body
+    const { nickname, answer_id, content, is_public } = req.body
 
-    // 업데이트할 필드 설정
+    if (!nickname || !answer_id) {
+      return res.status(400).json({ error: 'nickname과 answer_id가 필요합니다.' })
+    }
+
     const updateFields = {}
-    if (content !== undefined) updateFields.content = content
+    if (content !== undefined) updateFields.answer_content = content
     if (is_public !== undefined) updateFields.is_public = is_public
 
-    // 답변 업데이트
-    const updatedAnswer = await Answer.findOneAndUpdate({ nickname, question_id }, updateFields, {
-      new: false,
+    const updatedAnswer = await Answer.findOneAndUpdate({ nickname, answer_id }, updateFields, {
+      new: true,
     })
 
     if (!updatedAnswer) {
@@ -22,7 +24,6 @@ router.put('/', async (req, res) => {
 
     res.json({
       message: '답변이 성공적으로 수정되었습니다.',
-      content: updatedAnswer.content,
     })
   } catch (err) {
     console.error(err)
