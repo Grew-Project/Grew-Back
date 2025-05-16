@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
     const { nickname } = req.query
     if (!nickname) return res.status(400).json({ message: 'nickname이 필요합니다.' })
 
-    const forest = await Forest.findOne({ nickname }).exec()
+    const forest = await Forest.find({ nickname }).exec()
     if (!forest) return res.status(404).json({ message: 'Forest 정보가 없습니다.' })
 
     const allAnswers = await Answer.find({ nickname })
@@ -42,16 +42,18 @@ router.get('/', async (req, res) => {
     const groupSize = 16
     const groups = []
 
-    let baseTreeName = forest.tree_name
-    EMOTION_PRIORITY.forEach(emotion => {
-      const adj = getEmotionAdjective(emotion)
-      if (baseTreeName.startsWith(adj + ' ')) {
-        baseTreeName = baseTreeName.slice((adj + ' ').length)
-      }
-    })
-
     for (let i = 0; i < allAnswers.length; i += groupSize) {
       const groupAnswers = allAnswers.slice(i, i + groupSize)
+      const groupIndex = Math.floor(i / groupSize)
+      const currentForest = forest[groupIndex] || forest[0]
+
+      let baseTreeName = currentForest.tree_name
+      EMOTION_PRIORITY.forEach(emotion => {
+        const adj = getEmotionAdjective(emotion)
+        if (baseTreeName.startsWith(adj + ' ')) {
+          baseTreeName = baseTreeName.slice((adj + ' ').length)
+        }
+      })
 
       const emotionCounts = {}
       EMOTION_PRIORITY.forEach(emotion => (emotionCounts[emotion] = 0))
@@ -75,11 +77,12 @@ router.get('/', async (req, res) => {
 
       groups.push({
         index: groups.length + 1,
-        start_at: groupAnswers[groupAnswers.length - 1].created_at,
-        end_at: groupAnswers[0].created_at,
+        start_at: groupAnswers[0].created_at,
+        end_at: groupAnswers[groupAnswers.length - 1].created_at,
         emotion_counts: emotionCounts,
         dominant_emotion: dominantEmotion,
         tree_name: resultTreeName,
+        tree_type: currentForest.tree_type,
       })
     }
 
