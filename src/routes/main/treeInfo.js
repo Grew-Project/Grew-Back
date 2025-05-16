@@ -1,5 +1,6 @@
 const express = require('express')
 const Tree = require('../../models/Tree.js')
+const Forest = require('../../models/Forest.js')
 
 const router = express.Router()
 
@@ -30,6 +31,22 @@ router.get('/', async (req, res) => {
       tree_status = 4
     } else {
       tree_status = '단계 없음'
+    }
+
+    if (tree.answer_count === 16) {
+      const newForestEntry = new Forest({
+        nickname: tree.nickname,
+        tree_name: tree.tree_name,
+        tree_type: tree.tree_type,
+      })
+      await newForestEntry.save()
+
+      tree.tree_name = '행복나무'
+      tree.tree_type = '벚꽃나무'
+      tree_status = 1
+      tree.answer_count = 0
+      tree.create_at = new Date()
+      await tree.save()
     }
 
     res.json({
