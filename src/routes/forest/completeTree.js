@@ -1,7 +1,6 @@
 const express = require('express')
 const router = express.Router()
 const Answer = require('../../models/Answer.js')
-const Tree = require('../../models/Tree.js')
 const Forest = require('../../models/Forest.js')
 
 const EMOTION_PRIORITY = ['Love', 'Happiness', 'Confusion', 'Sadness', 'Anger']
@@ -26,32 +25,27 @@ function getEmotionAdjective(emotion) {
 router.get('/', async (req, res) => {
   try {
     const { nickname } = req.query
+    if (!nickname) return res.status(400).json({ message: 'nickname이 필요합니다.' })
 
-    if (!nickname) {
-      return res.status(400).json({ message: 'nickname이 필요합니다.' })
-    }
+    const forest = await Forest.findOne({ nickname }).exec()
+    if (!forest) return res.status(404).json({ message: 'Forest 정보가 없습니다.' })
 
-    // 최신 16개만 가져옴
     const answers = await Answer.find({ nickname })
       .select('emotion_type created_at')
       .sort({ created_at: -1 })
       .limit(16)
       .exec()
 
-    if (answers.length === 0) {
-      return res.status(404).json({ message: '답변이 없습니다.' })
-    }
+    if (answers.length === 0) return res.status(404).json({ message: '감정 답변이 없습니다.' })
 
-    // 감정 카운트
     const emotionCounts = {}
     EMOTION_PRIORITY.forEach(emotion => (emotionCounts[emotion] = 0))
-    answers.forEach(answer => {
-      if (EMOTION_PRIORITY.includes(answer.emotion_type)) {
-        emotionCounts[answer.emotion_type]++
+    answers.forEach(({ emotion_type }) => {
+      if (EMOTION_PRIORITY.includes(emotion_type)) {
+        emotionCounts[emotion_type]++
       }
     })
 
-    // 대표 감정 선정
     const dominantEmotion = EMOTION_PRIORITY.reduce((selected, emotion) => {
       if (
         emotionCounts[emotion] > (emotionCounts[selected] || 0) ||
@@ -62,41 +56,34 @@ router.get('/', async (req, res) => {
       return selected
     }, null)
 
-    const start_at = answers[answers.length - 1].created_at
-    const end_at = answers[0].created_at
+    let baseTreeName = forest.tree_name
+    EMOTION_PRIORITY.forEach(emotion => {
+      const adj = getEmotionAdjective(emotion)
+      if (baseTreeName.startsWith(adj + ' ')) {
+        baseTreeName = baseTreeName.slice((adj + ' ').length)
+      }
+    })
 
-    // 트리 이름과 타입 (Tree 테이블에서 둘 다 가져옴)
-    const tree = await Tree.findOne({ nickname }).select('tree_name tree_type').exec()
-    if (!tree) {
-      return res.status(404).json({ message: '트리 정보가 없습니다.' })
-    }
+    const resultTreeName = `${getEmotionAdjective(dominantEmotion)} ${baseTreeName}`
 
-    const resultTreeName = `${getEmotionAdjective(dominantEmotion)} ${tree.tree_name}`
+    forest.tree_name = resultTreeName
+    forest.tree_emotion = dominantEmotion
+    forest.start_at = answers[answers.length - 1].created_at
+    forest.end_at = answers[0].created_at
+    forest.emotion_counts = emotionCounts
+    await forest.save()
 
-    await Forest.findOneAndUpdate(
-      { nickname },
-      {
-        tree_type: tree.tree_type,
-        tree_name: resultTreeName,
-        tree_emotion: dominantEmotion,
-        start_at,
-        end_at,
-        emotion_counts: emotionCounts,
-      },
-      { upsert: true, new: true }
-    )
-
-    return res.status(200).json({
-      tree_type: tree.tree_type,
-      tree_name: resultTreeName,
-      tree_emotion: dominantEmotion,
-      start_at,
-      end_at,
-      emotion_counts: emotionCounts,
+    res.status(200).json({
+      tree_type: forest.tree_type,
+      tree_name: forest.tree_name,
+      tree_emotion: forest.tree_emotion,
+      start_at: forest.start_at,
+      end_at: forest.end_at,
+      emotion_counts: forest.emotion_counts,
     })
   } catch (error) {
-    console.error('Error generating forest summary:', error)
-    res.status(500).json({ message: '서버 오류가 발생했습니다.', error: error.message })
+    console.error('Error:', error)
+    res.status(500).json({ message: '서버 오류 발생', error: error.message })
   }
 })
 
