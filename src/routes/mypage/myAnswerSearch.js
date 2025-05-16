@@ -11,12 +11,10 @@ router.get('/', async (req, res) => {
       return res.status(400).json({ error: 'nickname이 필요합니다.' })
     }
 
-    // Answer 컬렉션에서 데이터를 가져옴
     const answers = await Answer.find({ nickname })
-      .select('-_id question_id is_public answer_content created_at')
+      .select('-_id question_id is_public answer_content created_at answer_id')
       .sort({ created_at: -1 })
 
-    // Question 컬렉션에서 content와 emotion_type을 가져옴
     const results = await Promise.all(
       answers.map(async answer => {
         const question = await Question.findOne({ question_id: answer.question_id }).select(
@@ -27,8 +25,9 @@ router.get('/', async (req, res) => {
           created_at: answer.created_at,
           is_public: answer.is_public,
           emotion_type: question ? question.emotion_type : null,
-          question_content: question ? question.question_content : null, // content로 접근
-          answer_content: answer.answer_content, // answer_content로 접근
+          question_content: question ? question.question_content : null,
+          answer_content: answer.answer_content,
+          answer_id: answer.answer_id,
         }
       })
     )
