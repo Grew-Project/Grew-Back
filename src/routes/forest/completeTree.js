@@ -75,6 +75,20 @@ router.get('/', async (req, res) => {
 
       const resultTreeName = `${getEmotionAdjective(dominantEmotion)} ${baseTreeName}`
 
+      await Forest.updateOne(
+        { _id: currentForest._id },
+        {
+          $set: {
+            tree_name: resultTreeName,
+            tree_type: currentForest.tree_type,
+            dominant_emotion: dominantEmotion,
+            start_at: groupAnswers[0].created_at,
+            end_at: groupAnswers[groupAnswers.length - 1].created_at,
+            emotion_counts: emotionCounts,
+          },
+        }
+      )
+
       groups.push({
         index: groups.length + 1,
         start_at: groupAnswers[0].created_at,
