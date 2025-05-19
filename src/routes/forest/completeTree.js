@@ -44,6 +44,8 @@ router.get('/', async (req, res) => {
 
     for (let i = 0; i < allAnswers.length; i += groupSize) {
       const groupAnswers = allAnswers.slice(i, i + groupSize)
+      if (groupAnswers.length < groupSize) continue // 16개 미만은 건너뜀
+
       const groupIndex = Math.floor(i / groupSize)
       const currentForest = forest[groupIndex] || forest[0]
 
