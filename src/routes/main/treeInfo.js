@@ -50,9 +50,11 @@ router.get('/', async (req, res) => {
         tree_status: tree_status,
       })
 
-      // tree.tree_name과 tree.tree_type 변경은 res.json 이후에 수행
+      const treeTypes = ['사과나무', '벚꽃나무', '단풍나무', '은행나무']
+      const currentIndex = treeTypes.indexOf(tree.tree_type)
+      const nextIndex = (currentIndex + 1) % treeTypes.length
+      tree.tree_type = treeTypes[nextIndex]
       tree.tree_name = '행복나무'
-      tree.tree_type = '벚꽃나무'
       await tree.save()
     } else {
       res.json({
