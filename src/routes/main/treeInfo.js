@@ -41,18 +41,25 @@ router.get('/', async (req, res) => {
       })
       await newForestEntry.save()
 
-      tree.tree_name = '행복나무'
-      tree.tree_type = '벚꽃나무'
       tree_status = 1
       tree.answer_count = 0
       tree.create_at = new Date()
-      await tree.save()
-    }
 
-    res.json({
-      tree_type: tree.tree_type,
-      tree_status: tree_status,
-    })
+      res.json({
+        tree_type: tree.tree_type,
+        tree_status: tree_status,
+      })
+
+      // tree.tree_name과 tree.tree_type 변경은 res.json 이후에 수행
+      tree.tree_name = '행복나무'
+      tree.tree_type = '벚꽃나무'
+      await tree.save()
+    } else {
+      res.json({
+        tree_type: tree.tree_type,
+        tree_status: tree_status,
+      })
+    }
   } catch (err) {
     console.error(err)
     res.status(500).json({ error: '서버 오류' })
