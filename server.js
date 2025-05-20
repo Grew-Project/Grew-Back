@@ -12,7 +12,7 @@ connectDB()
 
 app.use(
   cors({
-    origin: 'http://localhost:5173',
+    origin: ['http://localhost:5173', 'https://grew-front.vercel.app'],
     credentials: true,
   })
 )
