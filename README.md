@@ -55,3 +55,7 @@
 - `Refactor`: Code refactoring
 - `Test`: Test code, adding refactoring tests
 - `Build`: Build task updates, package manager updates
+
+# 주요 기능
+![image](https://github.com/user-attachments/assets/044c24c2-e9eb-44ba-81ad-dc5867ffc700)
+
